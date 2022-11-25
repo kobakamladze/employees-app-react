@@ -4,47 +4,71 @@ import AppFilter from "../app-filter/app-filter";
 import EmployeesList from "../employees-list/employees-list";
 import EmployeesAddForm from "../employees-add-form/employees-add-form";
 
+import uuid from "react-uuid";
+
 import "./app.css";
 import React from "react";
-
-const employeesInfo = [
-  {
-    fullName: "Koba Kamladze",
-    salary: "2400",
-    promoted: true,
-  },
-  {
-    fullName: "Vladimer Putani",
-    salary: "10",
-    promoted: false,
-  },
-];
 
 class App extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      employeesInfo: [
+      employees: [
         {
           fullName: "Koba Kamladze",
-          salary: "2400",
+          salary: 2400,
           promoted: true,
+          id: uuid(),
         },
         {
           fullName: "Vladimer Putani",
-          salary: "10",
+          salary: 10,
           promoted: false,
+          id: uuid(),
+        },
+        {
+          fullName: "James Hetfield",
+          salary: 150000,
+          promoted: false,
+          id: uuid(),
         },
       ],
     };
   }
 
   addEmployee = (e, { fullName, salary, promoted = false }) => {
+    console.log(e);
     e.preventDefault();
-    this.state.employeesInfo.push({ fullName, salary, promoted });
+
+    const stateDataClone = [...this.state.data];
+    stateDataClone.push({ fullName, salary, promoted, id: uuid() });
+
+    return this.setState({ data: stateDataClone });
   };
+
+  deleteEmployee = (id) => {
+    const deleteCandidateIndex = this.state.employees.findIndex(
+      (employee) => employee.id === id
+    );
+
+    // Cloning array to another variable to change state
+    const emplyoeesDuplicate = [...this.state.employees];
+    emplyoeesDuplicate.splice(deleteCandidateIndex, 1);
+
+    return this.setState({
+      employees: emplyoeesDuplicate,
+    });
+  };
+
   render() {
+    const { employees } = this.state;
+
+    const data = employees.map((employee) => ({
+      ...employee,
+      key: employee.id,
+    }));
+
     return (
       <div className="app">
         <AppInfo />
@@ -54,8 +78,8 @@ class App extends React.Component {
           <AppFilter />
         </div>
 
-        <EmployeesList employeesInfo={this.state.employeesInfo} />
-        <EmployeesAddForm addEmployee={() => this.addEmployee()} />
+        <EmployeesList employeesInfo={data} onDelete={this.deleteEmployee} />
+        <EmployeesAddForm onAddEmployee={() => this.addEmployee()} />
       </div>
     );
   }

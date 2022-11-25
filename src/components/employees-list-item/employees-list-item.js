@@ -17,7 +17,7 @@ class EmployeesListItem extends React.Component {
   likeEmployee = () => this.setState({ liked: !this.state.liked });
 
   render() {
-    const { fullName, salary } = this.props;
+    const { fullName, salary, id, onDelete } = this.props;
     const { promoted, liked } = this.state;
 
     let promotionClassName = "list-group-item d-flex justify-content-between";
@@ -25,7 +25,7 @@ class EmployeesListItem extends React.Component {
     if (liked) promotionClassName += " like";
 
     return (
-      <li className={promotionClassName}>
+      <li className={promotionClassName} id={id}>
         <span className="list-group-item-label" onClick={this.likeEmployee}>
           {fullName}
         </span>
@@ -43,7 +43,11 @@ class EmployeesListItem extends React.Component {
             <i className="fas fa-cookie"></i>
           </button>
 
-          <button type="button" className="btn-trash btn-sm ">
+          <button
+            type="button"
+            className="btn-trash btn-sm "
+            onClick={() => onDelete(id)}
+          >
             <i className="fas fa-trash"></i>
           </button>
           <i className="fas fa-star"></i>
