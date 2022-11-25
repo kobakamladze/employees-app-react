@@ -11,20 +11,26 @@ class EmployeesAddForm extends React.Component {
     };
   }
 
-  onInputChange = (e) => {
-    console.log(e);
-    return this.setState({
+  onInputChange = (e) =>
+    this.setState({
       [e.target.name]: e.target.value,
     });
+
+  onSubmitAddEmployee = (e, localProps) => {
+    e.preventDefault();
+    return this.props.onAddEmployee({ ...localProps });
   };
 
   render() {
-    const { onAddEmployee } = this.props;
+    const { fullName, salary } = this.state;
 
     return (
       <div className="app-add-form">
         <h3>Add new employee</h3>
-        <form className="add-form d-flex">
+        <form
+          className="add-form d-flex"
+          onSubmit={(e) => this.onSubmitAddEmployee(e, { fullName, salary })}
+        >
           <input
             type="text"
             className="form-control new-post-label"
@@ -35,7 +41,7 @@ class EmployeesAddForm extends React.Component {
           <input
             type="number"
             className="form-control new-post-label"
-            placeholder="Salary in $?"
+            placeholder="Salary in $:"
             name="salary"
             onChange={this.onInputChange}
           />
@@ -43,7 +49,7 @@ class EmployeesAddForm extends React.Component {
           <button
             type="submit"
             className="btn btn-outline-light"
-            onSubmit={onAddEmployee}
+            // onSubmit={(e) => onAddEmployee(e)}
           >
             Add
           </button>

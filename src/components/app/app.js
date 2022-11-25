@@ -14,7 +14,7 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      employees: [
+      employeesList: [
         {
           fullName: "Koba Kamladze",
           salary: 2400,
@@ -37,34 +37,40 @@ class App extends React.Component {
     };
   }
 
-  addEmployee = (e, { fullName, salary, promoted = false }) => {
-    console.log(e);
-    e.preventDefault();
+  addEmployee = ({ fullName, salary, promoted = false }) => {
+    console.log({ fullName, salary });
 
-    const stateDataClone = [...this.state.data];
-    stateDataClone.push({ fullName, salary, promoted, id: uuid() });
+    let stateDataClone;
+    if (fullName && salary) {
+      // Cloning data from state
+      stateDataClone = [...this.state.employeesList];
+      stateDataClone.push({ fullName, salary, promoted, id: uuid() });
+    }
 
-    return this.setState({ data: stateDataClone });
+    return this.setState({ employeesList: stateDataClone });
   };
 
   deleteEmployee = (id) => {
-    const deleteCandidateIndex = this.state.employees.findIndex(
+    const deleteCandidateIndex = this.state.employeesList.findIndex(
       (employee) => employee.id === id
     );
 
-    // Cloning array to another variable to change state
-    const emplyoeesDuplicate = [...this.state.employees];
-    emplyoeesDuplicate.splice(deleteCandidateIndex, 1);
+    let employeesDuplicate;
+    if (deleteCandidateIndex >= 0) {
+      // Cloning array to another variable to change state
+      employeesDuplicate = [...this.state.employeesList];
+      employeesDuplicate.splice(deleteCandidateIndex, 1);
+    }
 
     return this.setState({
-      employees: emplyoeesDuplicate,
+      employeesList: employeesDuplicate,
     });
   };
 
   render() {
-    const { employees } = this.state;
+    const { employeesList } = this.state;
 
-    const data = employees.map((employee) => ({
+    const data = employeesList.map((employee) => ({
       ...employee,
       key: employee.id,
     }));
@@ -79,7 +85,7 @@ class App extends React.Component {
         </div>
 
         <EmployeesList employeesInfo={data} onDelete={this.deleteEmployee} />
-        <EmployeesAddForm onAddEmployee={() => this.addEmployee()} />
+        <EmployeesAddForm onAddEmployee={this.addEmployee} />
       </div>
     );
   }
