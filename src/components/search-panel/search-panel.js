@@ -5,7 +5,7 @@ const SearchPanel = ({ onTypeSearch }) => {
     <input
       type="text"
       className="form-control search-input"
-      placeholder="Найти сотрудника"
+      placeholder="Search employee:"
       onChange={(e) => onTypeSearch(e.target.value)}
     />
   );

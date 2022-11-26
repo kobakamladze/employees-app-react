@@ -1,13 +1,13 @@
-import AppInfo from "../app-info/app-info";
-import SearchPanel from "../search-panel/search-panel";
-import AppFilter from "../app-filter/app-filter";
-import EmployeesList from "../employees-list/employees-list";
-import EmployeesAddForm from "../employees-add-form/employees-add-form";
+import AppInfo from '../app-info/app-info';
+import SearchPanel from '../search-panel/search-panel';
+import AppFilter from '../app-filter/app-filter';
+import EmployeesList from '../employees-list/employees-list';
+import EmployeesAddForm from '../employees-add-form/employees-add-form';
 
-import uuid from "react-uuid";
+import uuid from 'react-uuid';
 
-import "./app.css";
-import React from "react";
+import './app.css';
+import React from 'react';
 
 class App extends React.Component {
   constructor(props) {
@@ -16,36 +16,36 @@ class App extends React.Component {
     this.state = {
       employeesList: [
         {
-          fullName: "Koba Kamladze",
+          fullName: 'Koba Kamladze',
           salary: 2400,
           promoted: true,
           liked: false,
           id: uuid(),
         },
         {
-          fullName: "James Hetfield",
+          fullName: 'James Hetfield',
           salary: 150000,
           promoted: true,
           liked: true,
           id: uuid(),
         },
         {
-          fullName: "Vladimer Putani",
+          fullName: 'Vladimer Putani',
           salary: 10,
           promoted: false,
           liked: false,
           id: uuid(),
         },
       ],
-      term: "",
-      filter: "",
+      term: '',
+      filterType: '',
     };
   }
 
   // Promote employee
-  onTogglePromote = (id) => {
+  onTogglePromote = id => {
     const promoteCandidateIndex = this.state.employeesList.findIndex(
-      (employee) => employee.id === id
+      employee => employee.id === id
     );
 
     let dateDataClone;
@@ -72,9 +72,9 @@ class App extends React.Component {
   };
 
   // Delete employee
-  deleteEmployee = (id) => {
+  deleteEmployee = id => {
     const deleteCandidateIndex = this.state.employeesList.findIndex(
-      (employee) => employee.id === id
+      employee => employee.id === id
     );
 
     let employeesDuplicate;
@@ -89,37 +89,17 @@ class App extends React.Component {
     });
   };
 
-  // Search for employee
-  onTypeSearch = (input) => {
-    const searchInput = input;
-
+  // Search for employees
+  onTypeSearch = input => {
     this.setState({ term: input });
-    const stateDataClone = [...this.state.employeesList];
-    console.log(stateDataClone);
-
-    if (searchInput) {
-      const datasearchResult = stateDataClone.filter((employee) => {
-        const searchedCandidateName = employee.fullName.toLowerCase();
-
-        if (searchedCandidateName.includes(searchInput.toLowerCase())) {
-          return employee;
-        }
-      });
-
-      return this.setState({ employeesList: datasearchResult });
-    }
-
-    if (!searchInput) {
-      return this.setState({ employeesList: stateDataClone });
-    }
   };
 
-  onFilterData = (data, term) => {
+  searchData = (data, term) => {
     if (!term) {
       return data;
     }
 
-    const filteredEmployeesList = data.filter((employee) => {
+    const filteredEmployeesList = data.filter(employee => {
       const searchedCandidateName = employee.fullName.toLowerCase();
 
       if (searchedCandidateName.includes(term.toLowerCase())) {
@@ -130,19 +110,37 @@ class App extends React.Component {
     return filteredEmployeesList;
   };
 
-  render() {
-    const { employeesList, term } = this.state;
+  // Filter employees
+  onFilterTypeChange = filterValue => {
+    this.setState({ filterType: filterValue });
+  };
 
-    const data = employeesList.map((employee) => ({
-      ...employee,
-      key: employee.id,
-    }));
-    const filteredData = this.onFilterData(employeesList, term);
+  filterData = (data, filterType) => {
+    if (!filterType) return data;
+
+    if (filterType === 'onPromote') {
+      return data.filter(employee => employee.promoted);
+    }
+
+    if (filterType === 'withSalaryMoreThanThousand') {
+      return data.filter(employee => employee.salary >= 1000);
+    }
+  };
+
+  render() {
+    const { employeesList, term, filterType } = this.state;
+
+    // Data to display
+    const dataToDisplay = this.filterData(
+      this.searchData(employeesList, term),
+      filterType
+    );
 
     // All employees amount
-    const totalEmployeesAmount = data.length;
+    const totalEmployeesAmount = employeesList.length;
+
     // Only promoted employees amount
-    const promotedEmployeesAmount = data.filter(
+    const promotedEmployeesAmount = employeesList.filter(
       ({ promoted }) => promoted
     ).length;
 
@@ -155,11 +153,11 @@ class App extends React.Component {
 
         <div className="search-panel">
           <SearchPanel onTypeSearch={this.onTypeSearch} />
-          <AppFilter />
+          <AppFilter onFilterTypeChange={this.onFilterTypeChange} />
         </div>
 
         <EmployeesList
-          employeesInfo={filteredData}
+          data={dataToDisplay}
           onDelete={this.deleteEmployee}
           onTogglePromote={this.onTogglePromote}
         />
