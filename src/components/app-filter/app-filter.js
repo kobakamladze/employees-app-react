@@ -1,46 +1,32 @@
 import './app-filter.css';
 
 function AppFilter(props) {
-  const activateButton = e => {
-    const buttonsParent = e.target.parentElement.children;
-    for (const button of buttonsParent) {
-      button.className = 'btn btn-outline-light';
-    }
-    console.log(e.target);
-    e.target.className = 'btn btn-light';
-  };
+  const buttonsData = [
+    { label: 'All employees', filterType: '' },
+    { label: 'Employees to promote', filterType: 'onPromote' },
+    {
+      label: 'Salary more than 1000$',
+      filterType: 'withSalaryMoreThanThousand',
+    },
+  ];
 
-  const onActionFilter = e =>
-    props.onFilterTypeChange(e.target.getAttribute('data-filter'));
+  const buttons = buttonsData.map(({ label, filterType }) => {
+    const activeStatus = props.filterType === filterType;
+    const classByStatus = activeStatus ? 'btn-light' : 'btn-outline-light';
 
-  return (
-    <div className="btn-group" onClick={e => activateButton(e)}>
+    return (
       <button
         type="button"
-        className="btn btn-light"
-        data-filter=""
-        onClick={e => onActionFilter(e)}
+        className={`btn ${classByStatus}`}
+        key={filterType}
+        onClick={() => props.onFilterTypeChange(filterType)}
       >
-        All employees
+        {label}
       </button>
-      <button
-        type="button"
-        className="btn btn-outline-light"
-        data-filter="onPromote"
-        onClick={e => onActionFilter(e)}
-      >
-        Employees to promote
-      </button>
-      <button
-        type="button"
-        className="btn btn-outline-light"
-        data-filter="withSalaryMoreThanThousand"
-        onClick={e => onActionFilter(e)}
-      >
-        Salary more than 1000$
-      </button>
-    </div>
-  );
+    );
+  });
+
+  return <div className="btn-group">{buttons}</div>;
 }
 
 export default AppFilter;

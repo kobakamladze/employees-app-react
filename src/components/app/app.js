@@ -153,7 +153,10 @@ class App extends React.Component {
 
         <div className="search-panel">
           <SearchPanel onTypeSearch={this.onTypeSearch} />
-          <AppFilter onFilterTypeChange={this.onFilterTypeChange} />
+          <AppFilter
+            filterType={filterType}
+            onFilterTypeChange={this.onFilterTypeChange}
+          />
         </div>
 
         <EmployeesList
