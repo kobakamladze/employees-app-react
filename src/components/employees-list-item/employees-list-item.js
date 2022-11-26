@@ -8,13 +8,16 @@ class EmployeesListItem extends React.Component {
 
     this.state = {
       promoted: this.props.promoted,
-      liked: false,
+      liked: this.props.liked,
     };
   }
 
-  toggle = () => this.setState({ promoted: !this.state.promoted });
+  onTogglePromote = (id) => {
+    this.setState({ promoted: !this.state.promoted });
+    return this.props.onTogglePromote(id);
+  };
 
-  likeEmployee = () => this.setState({ liked: !this.state.liked });
+  onToggleLike = () => this.setState({ liked: !this.state.liked });
 
   render() {
     const { fullName, salary, id, onDelete } = this.props;
@@ -26,7 +29,10 @@ class EmployeesListItem extends React.Component {
 
     return (
       <li className={promotionClassName} id={id}>
-        <span className="list-group-item-label" onClick={this.likeEmployee}>
+        <span
+          className="list-group-item-label"
+          onClick={() => this.onTogglePromote(id)}
+        >
           {fullName}
         </span>
         <input
@@ -38,7 +44,7 @@ class EmployeesListItem extends React.Component {
           <button
             type="button"
             className="btn-cookie btn-sm "
-            onClick={this.toggle}
+            onClick={this.onToggleLike}
           >
             <i className="fas fa-cookie"></i>
           </button>

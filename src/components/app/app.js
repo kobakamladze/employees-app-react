@@ -19,37 +19,57 @@ class App extends React.Component {
           fullName: "Koba Kamladze",
           salary: 2400,
           promoted: true,
+          liked: false,
+          id: uuid(),
+        },
+        {
+          fullName: "James Hetfield",
+          salary: 150000,
+          promoted: true,
+          liked: true,
           id: uuid(),
         },
         {
           fullName: "Vladimer Putani",
           salary: 10,
           promoted: false,
-          id: uuid(),
-        },
-        {
-          fullName: "James Hetfield",
-          salary: 150000,
-          promoted: false,
+          liked: false,
           id: uuid(),
         },
       ],
     };
   }
 
-  addEmployee = ({ fullName, salary, promoted = false }) => {
-    console.log({ fullName, salary });
+  // Promote employee
+  onTogglePromote = (id) => {
+    const promoteCandidateIndex = this.state.employeesList.findIndex(
+      (employee) => employee.id === id
+    );
 
+    let dateDataClone;
+    if (promoteCandidateIndex >= 0) {
+      dateDataClone = [...this.state.employeesList];
+
+      dateDataClone[promoteCandidateIndex].promoted =
+        !dateDataClone[promoteCandidateIndex].promoted;
+
+      return this.setState({ employeesList: dateDataClone });
+    }
+  };
+
+  // Add new employee
+  addEmployee = ({ fullName, salary, promoted = false, liked = false }) => {
     let stateDataClone;
     if (fullName && salary) {
       // Cloning data from state
       stateDataClone = [...this.state.employeesList];
-      stateDataClone.push({ fullName, salary, promoted, id: uuid() });
+      stateDataClone.push({ fullName, salary, promoted, liked, id: uuid() });
     }
 
     return this.setState({ employeesList: stateDataClone });
   };
 
+  // Delete employee
   deleteEmployee = (id) => {
     const deleteCandidateIndex = this.state.employeesList.findIndex(
       (employee) => employee.id === id
@@ -75,16 +95,30 @@ class App extends React.Component {
       key: employee.id,
     }));
 
+    // All employees amount
+    const totalEmployeesAmount = data.length;
+    // Only promoted employees amount
+    const promotedEmployeesAmount = data.filter(
+      ({ promoted }) => promoted
+    ).length;
+
     return (
       <div className="app">
-        <AppInfo />
+        <AppInfo
+          totalEmployeesAmount={totalEmployeesAmount}
+          promotedEmployeesAmount={promotedEmployeesAmount}
+        />
 
         <div className="search-panel">
           <SearchPanel />
           <AppFilter />
         </div>
 
-        <EmployeesList employeesInfo={data} onDelete={this.deleteEmployee} />
+        <EmployeesList
+          employeesInfo={data}
+          onDelete={this.deleteEmployee}
+          onTogglePromote={this.onTogglePromote}
+        />
         <EmployeesAddForm onAddEmployee={this.addEmployee} />
       </div>
     );

@@ -10,16 +10,20 @@ class EmployeesList extends React.Component {
 
   render() {
     const employeesList = this.props.employeesInfo.length
-      ? this.props.employeesInfo.map(({ fullName, salary, promoted, id }) => (
-          <EmployeesListItem
-            fullName={fullName}
-            salary={salary}
-            promoted={promoted}
-            onDelete={() => this.props.onDelete(id)}
-            key={id}
-            id={id}
-          />
-        ))
+      ? this.props.employeesInfo.map(
+          ({ fullName, salary, promoted, liked, id }) => (
+            <EmployeesListItem
+              fullName={fullName}
+              salary={salary}
+              promoted={promoted}
+              liked={liked}
+              onDelete={() => this.props.onDelete(id)}
+              onTogglePromote={this.props.onTogglePromote}
+              key={id}
+              id={id}
+            />
+          )
+        )
       : "No employees found.";
 
     return <ul className="app-list list-group">{employeesList}</ul>;
