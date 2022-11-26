@@ -9,7 +9,7 @@ class EmployeesList extends React.Component {
   }
 
   render() {
-    const employeesList = this.props.employeesInfo.length
+    const employeesList = this.props?.employeesInfo?.length
       ? this.props.employeesInfo.map(
           ({ fullName, salary, promoted, liked, id }) => (
             <EmployeesListItem

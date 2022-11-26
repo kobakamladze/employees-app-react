@@ -37,6 +37,8 @@ class App extends React.Component {
           id: uuid(),
         },
       ],
+      term: "",
+      filter: "",
     };
   }
 
@@ -87,13 +89,55 @@ class App extends React.Component {
     });
   };
 
+  // Search for employee
+  onTypeSearch = (input) => {
+    const searchInput = input;
+
+    this.setState({ term: input });
+    const stateDataClone = [...this.state.employeesList];
+    console.log(stateDataClone);
+
+    if (searchInput) {
+      const datasearchResult = stateDataClone.filter((employee) => {
+        const searchedCandidateName = employee.fullName.toLowerCase();
+
+        if (searchedCandidateName.includes(searchInput.toLowerCase())) {
+          return employee;
+        }
+      });
+
+      return this.setState({ employeesList: datasearchResult });
+    }
+
+    if (!searchInput) {
+      return this.setState({ employeesList: stateDataClone });
+    }
+  };
+
+  onFilterData = (data, term) => {
+    if (!term) {
+      return data;
+    }
+
+    const filteredEmployeesList = data.filter((employee) => {
+      const searchedCandidateName = employee.fullName.toLowerCase();
+
+      if (searchedCandidateName.includes(term.toLowerCase())) {
+        return employee;
+      }
+    });
+
+    return filteredEmployeesList;
+  };
+
   render() {
-    const { employeesList } = this.state;
+    const { employeesList, term } = this.state;
 
     const data = employeesList.map((employee) => ({
       ...employee,
       key: employee.id,
     }));
+    const filteredData = this.onFilterData(employeesList, term);
 
     // All employees amount
     const totalEmployeesAmount = data.length;
@@ -110,12 +154,12 @@ class App extends React.Component {
         />
 
         <div className="search-panel">
-          <SearchPanel />
+          <SearchPanel onTypeSearch={this.onTypeSearch} />
           <AppFilter />
         </div>
 
         <EmployeesList
-          employeesInfo={data}
+          employeesInfo={filteredData}
           onDelete={this.deleteEmployee}
           onTogglePromote={this.onTogglePromote}
         />
